@@ -1,0 +1,500 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>editTags &mdash; MyCourses Calendar Edit 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="MyCourses Calendar Edit 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> MyCourses Calendar Edit
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../syntaxBreakdown.html">Event syntax breakdown</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../functions.html">Scripts</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MyCourses Calendar Edit</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>editTags</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for editTags</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 17.2.2017</span>
+
+<span class="sd">@author: Olli Riikonen</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">icalendar</span> <span class="k">import</span> <span class="n">Calendar</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="k">import</span> <span class="n">BeautifulSoup</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">geopy.geocoders</span> <span class="k">import</span> <span class="n">Nominatim</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="k">import</span> <span class="n">urlopen</span>
+
+
+
+
+<div class="viewcode-block" id="getGeoLocation"><a class="viewcode-back" href="../functions.html#editTags.getGeoLocation">[docs]</a><span class="k">def</span> <span class="nf">getGeoLocation</span><span class="p">(</span><span class="n">address</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns a string containing the longitude and latitude of the address:</span>
+
+<span class="sd">        :param address: a string containing the address</span>
+<span class="sd">                for which to search the location</span>
+<span class="sd">        :type address: string</span>
+
+<span class="sd">        :returns:</span>
+<span class="sd">            A string containing the longitude and latitude</span>
+<span class="sd">            of the address.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">geolocator</span> <span class="o">=</span> <span class="n">Nominatim</span><span class="p">()</span>
+    <span class="n">location</span> <span class="o">=</span> <span class="n">geolocator</span><span class="o">.</span><span class="n">geocode</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s1">&#39;;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">location</span><span class="o">.</span><span class="n">latitude</span><span class="p">),</span> \
+                     <span class="nb">str</span><span class="p">(</span><span class="n">location</span><span class="o">.</span><span class="n">longitude</span><span class="p">)])</span></div>
+
+
+
+<div class="viewcode-block" id="findCourseWeppage"><a class="viewcode-back" href="../functions.html#editTags.findCourseWeppage">[docs]</a><span class="k">def</span> <span class="nf">findCourseWeppage</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns a string containing the URL address</span>
+<span class="sd">        of the first search result from Google for</span>
+<span class="sd">        the search term given in parameter key</span>
+
+<span class="sd">        :param  key: a string containing the search</span>
+<span class="sd">                term for which the &quot;I&#39;m feeling lucky&quot;</span>
+<span class="sd">                search is performed</span>
+<span class="sd">        :type   key: string</span>
+
+<span class="sd">        :returns:</span>
+<span class="sd">                A string containing the URL address</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">goog_search</span> <span class="o">=</span> <span class="s2">&quot;https://www.google.fi/search?rls=en&amp;q=&quot;</span> <span class="o">+</span> \
+                   <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;&amp;ie=UTF-8&amp;oe=UTF-8&quot;</span>
+
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">goog_search</span><span class="p">)</span>
+    <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;html.parser&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;cite&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span></div>
+
+
+
+<div class="viewcode-block" id="isNum"><a class="viewcode-back" href="../functions.html#editTags.isNum">[docs]</a><span class="k">def</span> <span class="nf">isNum</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Checks if the string given as parameter is numeric</span>
+
+<span class="sd">        :param  s: a character to check if it is numeric or not</span>
+<span class="sd">        :type   s: char</span>
+
+<span class="sd">        :returns:</span>
+<span class="sd">                A boolean stating if value was numeric</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="parseMyCoursesCalendar"><a class="viewcode-back" href="../functions.html#editTags.parseMyCoursesCalendar">[docs]</a><span class="k">def</span> <span class="nf">parseMyCoursesCalendar</span><span class="p">(</span><span class="n">icalendarFile</span><span class="p">,</span> <span class="n">outputFileName</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Edits MyCourses exported .ics calendar into nicer form</span>
+
+<span class="sd">    Script takes the .ics file and edits the summary of each</span>
+<span class="sd">    event. As MyCourses exported calendar events&#39; summaries</span>
+<span class="sd">    contain extra information in addition to the name of the</span>
+<span class="sd">    event, it is split into respective fields supported by</span>
+<span class="sd">    the icalendar format, such as location, URL and geo.</span>
+
+<span class="sd">    The format of the summary and how to split it was deduced</span>
+<span class="sd">    based on events exported for five courses so some variation</span>
+<span class="sd">    and bugs (information in wrong field/ missing information)</span>
+<span class="sd">    might be present in the created calendar.</span>
+
+<span class="sd">    :param  icalendarFile: the calendar exported from MyCourse in</span>
+<span class="sd">            icalendar format (.ics) as a path to the file</span>
+<span class="sd">    :type   icalendarFile: string</span>
+
+<span class="sd">    :param  outputFileName: the path and name of the file to</span>
+<span class="sd">            which the edited calendar is exported.</span>
+<span class="sd">    :type   outputFileName: string</span>
+
+<span class="sd">    :returns:</span>
+<span class="sd">            Nothing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="sd">&quot;&quot;&quot; Open the icalendar file exported form MyCourses:&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Check if the given address is URL or path:&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">icalendarFile</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;URL&quot;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">icalendarFile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Path&quot;</span><span class="p">)</span>
+
+    <span class="n">datas</span> <span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">cal</span> <span class="o">=</span> <span class="n">Calendar</span><span class="o">.</span><span class="n">from_ical</span><span class="p">(</span><span class="n">datas</span><span class="p">)</span>
+
+
+    <span class="sd">&quot;&quot;&quot;The current year to help check the URL of courses&quot;&quot;&quot;</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
+
+
+    <span class="sd">&quot;&quot;&quot; Dictionaries for the most resource demanding lookups</span>
+<span class="sd">        also works as a safety measure as google doesn&#39;t like</span>
+<span class="sd">        too frequent inquiries (weblist, searching the course</span>
+<span class="sd">        web-page)&quot;&quot;&quot;</span>
+    <span class="n">geoList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">webList</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+    <span class="sd">&quot;&quot;&quot; Go through the events and split the information</span>
+<span class="sd">        to their respective fields: &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">cal</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="s1">&#39;vevent&#39;</span><span class="p">):</span>
+
+        <span class="n">description</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">)</span>
+        <span class="n">summery</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;summary&#39;</span><span class="p">)</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">summery</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="n">tags</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot; Syntax for event with two data point:</span>
+<span class="sd">            0. eventType nameFin/nameEng/nameSwe |</span>
+<span class="sd">               eventName/ courseCode - courseName</span>
+<span class="sd">            1. courseSchedule &quot;&quot;&quot;</span>
+            <span class="n">tags</span> <span class="o">=</span> <span class="n">tags</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">isNum</span><span class="p">(</span><span class="n">tags</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]):</span>
+                <span class="n">summary</span> <span class="o">=</span> <span class="n">tags</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">summary</span> <span class="o">=</span> <span class="n">tags</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">courseName</span> <span class="o">=</span> <span class="n">tags</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">courseCode</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tags</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">summary</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">summary</span><span class="p">,</span> <span class="n">courseName</span><span class="p">])</span>
+
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot; Syntax for event with four data points:</span>
+<span class="sd">                0. eventType nameFin/nameEng/nameSwe,</span>
+<span class="sd">                1. location(room name) / location(room code) |</span>
+<span class="sd">                    location(room code) (location(room code))</span>
+<span class="sd">                2. location(address)/ courseCode - courseName</span>
+<span class="sd">                3. courseSchedule &quot;&quot;&quot;</span>
+            <span class="n">eventType</span> <span class="o">=</span> <span class="n">tags</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">courseName</span> <span class="o">=</span> <span class="n">tags</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">summary</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">eventType</span><span class="p">,</span> <span class="n">courseName</span><span class="p">])</span>
+
+            <span class="n">courseCode</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tags</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span>\
+                                           <span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+            <span class="n">room</span> <span class="o">=</span> <span class="n">tags</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">address</span> <span class="o">=</span> <span class="n">tags</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">location</span> <span class="o">=</span> <span class="s1">&#39; at &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">room</span><span class="p">,</span> <span class="n">address</span><span class="p">])</span>
+
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot; Syntax for event with five data points:</span>
+<span class="sd">                0. eventType nameFin/nameEng/nameSwe</span>
+<span class="sd">                1. location(room name) / location(room code)</span>
+<span class="sd">                2. location(building),</span>
+<span class="sd">                3. location(address)/ courseCode - courseName</span>
+<span class="sd">                4. courseSchedule &quot;&quot;&quot;</span>
+            <span class="n">eventType</span> <span class="o">=</span> <span class="n">tags</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">courseName</span> <span class="o">=</span> <span class="n">tags</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">summary</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">eventType</span><span class="p">,</span> <span class="n">courseName</span><span class="p">])</span>
+
+            <span class="n">courseCode</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tags</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span>\
+                                           <span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+            <span class="n">room</span> <span class="o">=</span> <span class="n">tags</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">building</span> <span class="o">=</span> <span class="n">tags</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">address</span> <span class="o">=</span> <span class="n">tags</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">location</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">room</span><span class="p">,</span> <span class="n">building</span><span class="p">,</span> <span class="n">address</span><span class="p">])</span>
+
+
+        <span class="sd">&quot;&quot;&quot; Find the web page of the course with google search</span>
+<span class="sd">            as MyCourses API is not openly available:&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">courseCode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">webList</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">webPage</span> <span class="o">=</span> <span class="n">findCourseWeppage</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">courseCode</span><span class="p">,</span><span class="n">year</span><span class="p">]))</span>
+            <span class="n">webList</span><span class="p">[</span><span class="n">courseCode</span><span class="p">]</span> <span class="o">=</span> <span class="n">webPage</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">webPage</span> <span class="o">=</span> <span class="n">webList</span><span class="p">[</span><span class="n">courseCode</span><span class="p">]</span>
+
+        <span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Course code: &quot;</span><span class="p">,</span><span class="n">courseCode</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+                               <span class="s2">&quot;Course URL: &quot;</span><span class="p">,</span> <span class="n">webPage</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+                               <span class="n">description</span><span class="p">])</span>
+
+        <span class="sd">&quot;&quot;&quot; Find the geological location of the event: &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">address</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">geoList</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">address</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">geo</span> <span class="o">=</span> <span class="n">getGeoLocation</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">geo</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">geoList</span><span class="p">[</span><span class="n">address</span><span class="p">]</span> <span class="o">=</span> <span class="n">geo</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">geo</span> <span class="o">=</span> <span class="n">geoList</span><span class="p">[</span><span class="n">address</span><span class="p">]</span>
+
+
+        <span class="sd">&quot;&quot;&quot; &#39;&#39;&#39; Testing the program with basic printing:&#39;&#39;&#39;</span>
+<span class="sd">        print(&quot;Summary:&quot;, summary)</span>
+<span class="sd">        print(&quot;Location:&quot;, location)</span>
+<span class="sd">        print(&quot;Description:&quot;, description )</span>
+<span class="sd">        print(&quot;Geo:&quot;, geo)</span>
+<span class="sd">        print()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+
+        <span class="n">event</span><span class="p">[</span><span class="s1">&#39;summary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">summary</span>
+        <span class="n">event</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">description</span>
+        <span class="n">event</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">location</span>
+        <span class="n">event</span><span class="p">[</span><span class="s1">&#39;geo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geo</span>
+        <span class="n">event</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">webPage</span>
+
+        <span class="n">outputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outputFileName</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span>
+        <span class="n">outputFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cal</span><span class="o">.</span><span class="n">to_ical</span><span class="p">())</span>
+        <span class="n">outputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<span class="sd">&#39;&#39;&#39; Possible data in indexes:</span>
+
+<span class="sd">    0     eventType nameFin/nameEng/nameSwe/ courseCode - courseName | eventName/ courseCode - courseName</span>
+<span class="sd">    1     location(room name) / location(room code) | location(room code) (location(room code)) | courseSchedule</span>
+<span class="sd">    2 - | location(building) | location(building)/ courseCode - courseName</span>
+<span class="sd">    3 - | location(address)/ courseCode - courseName | courseSchedule</span>
+<span class="sd">    4 - | courseSchedule</span>
+
+<span class="sd">    --</span>
+
+<span class="sd">    Possible data collections:</span>
+<span class="sd">    length</span>
+<span class="sd">    1 -</span>
+
+<span class="sd">    2 eventType nameFin/nameEng/nameSwe | eventName/ courseCode - courseName, ...</span>
+<span class="sd">      courseSchedule</span>
+
+<span class="sd">    3 -</span>
+
+<span class="sd">    4 eventType nameFin/nameEng/nameSwe , location(room name) / location(room code) ...</span>
+<span class="sd">      location(room code) (location(room code)), location(address)/ courseCode - courseName, ...</span>
+<span class="sd">      courseSchedule</span>
+
+<span class="sd">    5 eventType nameFin/nameEng/nameSwe , location(room name) / location(room code), ...</span>
+<span class="sd">      location(building), location(address)/ courseCode - courseName, courseSchedule</span>
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="n">icalFile</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;/Users/Olli/Documents/LiClipse Workspace/&quot;</span><span class="p">,</span> \
+                       <span class="s2">&quot;MCCalWrapper/icalexport.ics&quot;</span><span class="p">])</span>
+    <span class="n">icalURL</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">dirout</span> <span class="o">=</span> <span class="s2">&quot;/Users/Olli/Documents/LiClipse Workspace/&quot;</span> \
+                <span class="s2">&quot;MCCalWrapper&quot;</span>
+    <span class="n">outputFileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirout</span><span class="p">,</span> <span class="s1">&#39;testCal.ics&#39;</span><span class="p">)</span>
+
+    <span class="n">parseMyCoursesCalendar</span><span class="p">(</span><span class="n">icalFile</span><span class="p">,</span> <span class="n">outputFileName</span><span class="p">)</span>
+
+
+
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Olli Riikonen.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

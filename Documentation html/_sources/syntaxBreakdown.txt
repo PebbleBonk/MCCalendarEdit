@@ -1,0 +1,54 @@
+Event syntax breakdown
+**********************
+
+Theory behind editing the calendar events: setup and application.
+
+Decrypting the MyCourses Calendar syntax
+========================================
+
+Data available in exported calendar
+-----------------------------------
+The events exported from MyCourses have different kind of data in them. Although the file follows the calendar standard, it does not spread the information logically. Most of the information is stored in the event summary tag, which normally should be kept as short as possible for clarity. Below are listed all the different information extractable from the exported events.
+
+From summary tag:
+ - event type in Finnish
+ - event type in English
+ - event type in Swedish
+ - course code
+ - course name
+ - event name
+ - location of the event, room
+ - location of the event, building
+ - location of the event, address
+ - schedule of the course (starting and ending date)
+
+From other tags (logically distributed):
+ - description of the event
+ - timing of the event
+
+Possible arrangements of data
+-----------------------------
+The data described above is collated differently in different events. The events in turn vary according to event type (lecture, exercise, web course etc.) and the course. All different data arrangements found in the tests events are found form the table below. The data is represented as a string in which it appears in the summary field, and thusly provides a guideline for splitting the strings for extracting the information.
+
+
+=================  ======================================================================  ====================================================================================  ==========================================  ==========================================  ==============
+Length					Data structures
+-----------------  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Length of summary    1st index			       					      				         2nd index																			  3rd index								      4th index									    5th index
+=================  ======================================================================  ====================================================================================  ==========================================  ==========================================  ==============
+1
+2 		   		    eventType nameFin/nameEng/nameSwe ? eventName courseCode - courseName  courseSchedule
+3		   
+4		   		   eventType nameFin/nameEng/nameSwe								  	   location(room name) / location(room code ? location(room code) (location(room code))  location(address)/ courseCode - courseName  courseSchedule
+5		   		   eventType nameFin/nameEng/nameSwe 							  	       location(room name) / location(room code)  										     location(building)   					 	 location(address)/ courseCode - courseName  courseSchedule
+=================  ======================================================================  ====================================================================================  ==========================================  ==========================================  ==============
+
+Form inspecting the different arrangements of information, we can see that the final member of every summary tag is the course schedule. This is rather redundant as it is already stated by the calendar events. Moreover, it is not information one would need at a glimpse as they inspect calendar. If needed, this could be moved to the description tag. 
+
+Also, the member is always the type of the event, spelled in several languages. This can be split and only wanted language used for description. The script uses english as default for its ubiquity. The other members are treated individually based on the length of the event.
+
+.. note::
+	There is a high possibility that other courses have markups that this script does not handle. Please contact me if you run into this kind of problems and I will try to add it nicely.
+
+.. note::
+	Although a nicer way to handle this would be to write a script recognising the features of each tag and split them automatically, instead of hardcoding the indices of the information.

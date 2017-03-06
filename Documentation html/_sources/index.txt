@@ -1,0 +1,51 @@
+.. MyCoursesCalendarEditor documentation master file, created by
+   sphinx-quickstart on Thu Mar  2 12:22:08 2017.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to MyCoursesCalendarEditor's documentation
+==================================================
+
+Contents:
+=========
+
+.. toctree::
+   :maxdepth: 3
+
+   syntaxBreakdown
+   functions 
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
+General information
+===================
+Loorem ipsumia
+
+
+Motivation
+----------
+This project was started as I got personally annoyed by the way MyCourses exported calendar looked in my calendar. The summary of the events, the one that is shown in the calendar event in any modern calendar was easy too long and contained information both unnecessary and in wrong place. 
+
+My previous experience with working with calendar format helped my also to notice some of the information could had been stored in other tags, completely supported by the calendar format, and thus any other modern calendar format.
+
+In addition of removing some redundancies and placing the information to their respective tags I used some external Python modules to get some extra information to the events, for example the location of the event and URL address of the course.
+
+For more information on calendar format, please refer to the ’official documentation
+<https://icalendar.org>’_.
+
+Progress and improvement suggestions
+------------------------------------
+The program was implemented on the resourceful hours during a party weekend in Tallinn. The first task was to crack down the syntax on how MyCourses comprised the summary for the events, which information it included and in which order. Documentation on the results can be found in the Syntax breakdown section. After the syntax was clear, I started implementing the script which broke the summary down to different pieces of information based on separating characters and locations. Finally, after minimum functionality of truncating the summary to only necessary was met, I added some extra features as I got a tad excited.
+
+In the future, one should scrape the MyCourses database to ensure the data collections mentioned in this documentation are the only ones. However, should one be more redundant, one could implement a simple check for event information type and thus get the script working with any event. This, however, would require a lot of hardcoding of different information types for check-ups.
+
+Thoughts and acknowledgements
+-----------------------------
+Some of the information has been chunked in one way, as the preferred location is rather subjective. This is why I think, so much information had to be crammed into the summary in the first place, in addition to the way MyCourse itself handles the events, of course. (Check the calendar sidebar there if you’re interested.) Because of this, for example, I decided the only needed information in the summary was the type of the event (lecture, exercises etc.) and the course name. Some might add the room of the event as well, but I decided to put it under location. This choice, however, breaks the automatic location search with common map programs used in many calendar softwares, as it only accepts address. In my case the tradeoff was acceptable as I know the addresses of the buildings and rooms. Some of the events don’t have the address nor the building listed, so the location field might be empty.
+

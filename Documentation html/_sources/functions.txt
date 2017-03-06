@@ -1,0 +1,19 @@
+Scripts
+*******
+
+This section gives quick introductions to the functions written. For the theory behind why functions behave this way, please refer to the Syntax breakdown section. For more detailed description on how the scripts work, please refer to the source code. The code should be well commented so their behaviour and logic can be observed.
+
+Main script
+===========
+The following script includes the main logic how calendar events are edited.
+
+.. automodule:: editTags
+	:members: parseMyCoursesCalendar
+
+
+Assistive functions
+===================
+The following functions include the assistive features used to edit the events.
+
+.. automodule:: editTags
+	:members: getGeoLocation, findCourseWeppage, isNum
